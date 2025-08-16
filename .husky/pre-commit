@@ -1,0 +1,25 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running pre-commit checks..."
+
+# Run forge fmt
+echo "🔧 Running forge fmt..."
+forge fmt
+
+# Check if there are any changes after formatting
+if ! git diff --exit-code --quiet; then
+  echo "❌ Code formatting changes detected. Please stage the formatted files."
+  echo "Run: git add -A"
+  exit 1
+fi
+
+# Run forge build
+echo "🔨 Building contracts..."
+forge build --sizes || exit 1
+
+# Run tests
+echo "🧪 Running tests..."
+forge test || exit 1
+
+echo "✅ All pre-commit checks passed!"

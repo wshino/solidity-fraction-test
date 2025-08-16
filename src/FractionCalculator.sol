@@ -6,7 +6,6 @@ pragma solidity ^0.8.13;
  * @dev Contract to verify fraction calculations and remainder handling in Solidity
  */
 contract FractionCalculator {
-    
     /**
      * @dev Calculate 30% (3/10) of the input amount
      * @param amount The input amount in wei
@@ -17,7 +16,7 @@ contract FractionCalculator {
         share = (amount * 3) / 10;
         remainder = amount - (share * 10 / 3);
     }
-    
+
     /**
      * @dev Calculate 10% (1/10) of the input amount
      * @param amount The input amount in wei
@@ -28,7 +27,7 @@ contract FractionCalculator {
         share = amount / 10;
         remainder = amount - (share * 10);
     }
-    
+
     /**
      * @dev Split amount into 30%, 10%, and remaining portions
      * @param amount The total amount to split
@@ -37,25 +36,24 @@ contract FractionCalculator {
      * @return remaining The remaining amount after deducting 30% and 10%
      * @return totalRemainder The total remainder from calculations
      */
-    function splitAmount(uint256 amount) public pure returns (
-        uint256 thirtyPercent,
-        uint256 tenPercent,
-        uint256 remaining,
-        uint256 totalRemainder
-    ) {
+    function splitAmount(uint256 amount)
+        public
+        pure
+        returns (uint256 thirtyPercent, uint256 tenPercent, uint256 remaining, uint256 totalRemainder)
+    {
         thirtyPercent = (amount * 3) / 10;
         tenPercent = amount / 10;
         remaining = amount - thirtyPercent - tenPercent;
-        
+
         // Calculate actual remainder (lost wei due to integer division)
         uint256 expectedTotal = (amount * 3) / 10 + amount / 10;
         uint256 actualTotal = thirtyPercent + tenPercent;
-        
+
         // If we perfectly calculated 40%, remaining should be 60%
         uint256 perfect40Percent = (amount * 4) / 10;
         totalRemainder = perfect40Percent > actualTotal ? perfect40Percent - actualTotal : 0;
     }
-    
+
     /**
      * @dev Check if an amount is divisible by 10 (no remainder expected)
      * @param amount The amount to check
@@ -64,7 +62,7 @@ contract FractionCalculator {
     function isDivisibleBy10(uint256 amount) public pure returns (bool isDivisible) {
         isDivisible = (amount % 10 == 0);
     }
-    
+
     /**
      * @dev Calculate the remainder when dividing by 10
      * @param amount The amount to check

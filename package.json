@@ -1,0 +1,16 @@
+{
+  "name": "solidity-fraction-test",
+  "version": "1.0.0",
+  "description": "Solidity fraction calculation and remainder verification tests",
+  "scripts": {
+    "prepare": "husky install",
+    "test": "forge test",
+    "test:verbose": "forge test -vvv",
+    "build": "forge build --sizes",
+    "fmt": "forge fmt",
+    "fmt:check": "forge fmt --check"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0"
+  }
+}
