@@ -13,8 +13,17 @@ contract FractionCalculator {
      * @return remainder The remainder after calculation
      */
     function calculate30Percent(uint256 amount) public pure returns (uint256 share, uint256 remainder) {
-        share = (amount * 3) / 10;
-        remainder = amount - (share * 10 / 3);
+        // Check for potential overflow before multiplication
+        if (amount > type(uint256).max / 3) {
+            // For very large amounts, use alternative calculation to avoid overflow
+            share = (amount / 10) * 3 + ((amount % 10) * 3) / 10;
+        } else {
+            share = (amount * 3) / 10;
+        }
+
+        // Calculate remainder - this won't overflow since share <= amount
+        uint256 exactTotal = share * 10 / 3;
+        remainder = amount > exactTotal ? amount - exactTotal : 0;
     }
 
     /**
@@ -41,16 +50,28 @@ contract FractionCalculator {
         pure
         returns (uint256 thirtyPercent, uint256 tenPercent, uint256 remaining, uint256 totalRemainder)
     {
-        thirtyPercent = (amount * 3) / 10;
+        // Check for potential overflow before multiplication
+        if (amount > type(uint256).max / 3) {
+            // For very large amounts, use alternative calculation to avoid overflow
+            thirtyPercent = (amount / 10) * 3 + ((amount % 10) * 3) / 10;
+        } else {
+            thirtyPercent = (amount * 3) / 10;
+        }
+
         tenPercent = amount / 10;
         remaining = amount - thirtyPercent - tenPercent;
 
         // Calculate actual remainder (lost wei due to integer division)
-        uint256 expectedTotal = (amount * 3) / 10 + amount / 10;
         uint256 actualTotal = thirtyPercent + tenPercent;
 
-        // If we perfectly calculated 40%, remaining should be 60%
-        uint256 perfect40Percent = (amount * 4) / 10;
+        // Calculate perfect 40% avoiding overflow
+        uint256 perfect40Percent;
+        if (amount > type(uint256).max / 4) {
+            perfect40Percent = (amount / 10) * 4 + ((amount % 10) * 4) / 10;
+        } else {
+            perfect40Percent = (amount * 4) / 10;
+        }
+
         totalRemainder = perfect40Percent > actualTotal ? perfect40Percent - actualTotal : 0;
     }
 
